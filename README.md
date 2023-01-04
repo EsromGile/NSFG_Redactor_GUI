@@ -6,5 +6,5 @@ This application is used to redact personal information from student submissions
 - pysimplegui
 
 ### Build
-pyinstaller -F -w -i="icon.ico" <python-file>
+pyinstaller -F -w -i="icon.ico" \<python-file\>
 
