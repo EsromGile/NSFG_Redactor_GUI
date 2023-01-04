@@ -33,6 +33,12 @@ def main():
 
     window = sg.Window("File Redactor", layout, font=font)
 
+    def deleteMessage(path, msg, currentText):
+        os.remove(path)
+        currentText += msg
+        window["MESSAGE_BOX"].update(currentText)
+        return currentText
+
     while True:
         event, values = window.read()
         if event == "Exit" or event == sg.WIN_CLOSED:
@@ -63,12 +69,10 @@ def main():
                     splitFileName = os.path.splitext(files[i])
                     ending = splitFileName[1]
 
-                    # delete index.html
-                    if ending == ".html":
-                        os.remove(filePath)
+                    # remove non-prossessable files
+                    if not (ending == ".docx" or ending == ".doc" or ending == ".pdf"):
+                        messages = deleteMessage(filePath, "===== Deleting file of type {}...\n".format(ending), messages)
                         deletedCount += 1
-                        messages += ("===== Deleting index file...\n")
-                        window["MESSAGE_BOX"].update(messages)
                         continue
 
                     # check for valid file name
@@ -81,10 +85,9 @@ def main():
                         currentNumbers = files[i][:indexes[1]-1]
                         previousNumbers = files[i-1][:indexes[1]-1]
                         if currentNumbers == previousNumbers:
-                            os.remove(os.path.join(folder, files[i-1]))
+                            messages = deleteMessage(os.path.join(folder, files[i-1]), "===== Deleting duplicate...\n", messages)
                             deletedCount += 1
-                            messages += ("===== Deleting duplicate...\n")
-                            window["MESSAGE_BOX"].update(messages)
+                            continue
 
                     redactedFile = files[i][:indexes[1]] + files[i][indexes[2]:indexes[3]-1] + ending
                     files[i] = redactedFile
